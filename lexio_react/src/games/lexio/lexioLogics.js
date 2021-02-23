@@ -14,7 +14,7 @@ export const useLexioLogics = () => {
   const [waiting, setWaiting] = React.useState(true);
 
   React.useEffect(() => {
-    setSocket(io("http://henry-game.ap-northeast-2.elasticbeanstalk.com:8000"));
+    setSocket(io("10.114.69.34:8000"));
   }, []);
 
   React.useEffect(() => {

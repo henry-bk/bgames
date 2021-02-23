@@ -24,7 +24,7 @@ const styles = {
     position: "absolute",
     width: "100%",
     height: "25%",
-    bottom: "5%",
+    bottom: "3vh",
   },
   ready: {
     top: 0,

@@ -8,7 +8,7 @@ const styles = {
   cardBody: ({ type, index, selected, lexioTheme, anim, dim }) => ({
     position: "relative",
     width: "6.5%",
-    height: "18vh",
+    height: "15vh",
     backgroundColor: dim ? lexioTheme.dimColor : lexioTheme.blockColor,
     color: lexioTheme.colors[type],
     borderRadius: "1vh",
@@ -32,8 +32,8 @@ const styles = {
   },
   shape: ({ lexioTheme, type }) => ({
     position: "absolute",
-    width: "10vh",
-    height: "10vh",
+    width: "9vh",
+    height: "9vh",
     top: "-1vh",
     right: "-1.5vh",
     borderRadius: "10vh",
@@ -41,11 +41,11 @@ const styles = {
   }),
   shape2: ({ lexioTheme, type }) => ({
     position: "absolute",
-    width: "5vh",
-    height: "5vh",
+    width: "4vh",
+    height: "4vh",
     bottom: "1vh",
     left: "0.5vh",
-    borderRadius: "5vh",
+    borderRadius: "4vh",
     backgroundColor: lexioTheme.colors[type] + "99",
   }),
 };
@@ -64,8 +64,8 @@ const Card = ({ type, number, selected, index, anim, dim }) => {
         <CenterComponent full>
           <div
             style={{
-              width: "8.5vh",
-              height: "8.5vh",
+              width: "7.5vh",
+              height: "7.5vh",
               borderRadius: "8.5vh",
               backgroundColor: lexioTheme.blockColor,
             }}
