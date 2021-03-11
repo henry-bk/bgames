@@ -16,6 +16,7 @@ export default (state = {}, action) => {
         ...state,
         ...payload,
         selectedCards: [],
+        useCards: payload.useCards,
       };
     case SELECT_CARD:
       cards = Object.assign([], state.cards);

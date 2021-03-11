@@ -163,6 +163,7 @@ const proceedTurn = () => {
 
 const sync = () => {
   const players = [];
+
   for (let i = 0; i < started.ids.length; ++i) {
     const id = started.ids[i];
     players.push({
@@ -175,6 +176,7 @@ const sync = () => {
   for (let i = 0; i < started.ids.length; ++i) {
     const id = started.ids[i];
     io.to(id).emit("sync", {
+      useCard: started.useCard,
       myIndex: i,
       turn: started.turn,
       ...started.attendants[i],
@@ -182,4 +184,5 @@ const sync = () => {
       floor: started.floor,
     });
   }
+
 };

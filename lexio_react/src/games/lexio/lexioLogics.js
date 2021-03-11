@@ -39,7 +39,6 @@ export const useLexioLogics = () => {
       setShowReady(true);
     });
     socket.on("sync", (data) => {
-      // console.log(data);
       dispatch(syncGame(data));
       setWaiting(false);
     });
@@ -60,6 +59,7 @@ export const useLexioLogics = () => {
   const data = useSelector(({ lexio }) => lexio);
   const selectedCards =
     data.selectedCards && data.selectedCards.map((i) => data.cards[i]);
+  const useCard = data.useCard;
   const { myIndex } = data;
   const floor =
     data.floor !== undefined &&
@@ -82,7 +82,7 @@ export const useLexioLogics = () => {
             selectedCards[1].number === selectedCards[2].number
         );
       } else if (selectedCards.length === 5) {
-        const data = checkFiveCards(selectedCards);
+        const data = checkFiveCards(selectedCards, useCard);
         const { isStraight, isFlush, isFullHouse, isFourCard, top } = data;
         if (isStraight || isFlush || isFullHouse || isFourCard) {
           setCanSubmit(true);
@@ -130,8 +130,8 @@ export const useLexioLogics = () => {
           if (m < 3) m += 100;
           setCanSubmit(f < m);
         } else if (floor.length === 5) {
-          const myResult = checkFiveCards(selectedCards);
-          const floorResult = checkFiveCards(floor);
+          const myResult = checkFiveCards(selectedCards, useCard);
+          const floorResult = checkFiveCards(floor, useCard);
 
           console.log(myResult, floorResult);
           if (floorResult.isStraight && !floorResult.isFlush) {
@@ -238,7 +238,7 @@ export const useLexioLogics = () => {
   };
 };
 
-const checkFiveCards = (cards) => {
+const checkFiveCards = (cards, useCard) => {
   const sorted = cards
     .map((m) => m.number)
     .sort((a, b) => {
@@ -261,7 +261,7 @@ const checkFiveCards = (cards) => {
   for (const c of cards) {
     numberSet.add(c.number);
   }
-  const isStraight = checkStraight(sorted);
+  const isStraight = checkStraight(sorted, useCard);
   const isFlush = typeSet.size === 1;
   const isFullHouse =
     numberSet.size === 2 && (sorted[1] !== sorted[2] || sorted[2] != sorted[3]);
@@ -298,13 +298,15 @@ const checkFiveCards = (cards) => {
   };
 };
 
-const checkStraight = (numbers) => {
+const checkStraight = (numbers, useCard) => {
   const ns = Object.assign([], numbers);
-  ns.sort();
+  //ns.sort();
   let isStraight = true;
   let n = ns[0];
   for (let i = 1; i < ns.length; ++i) {
-    if (ns[i] !== n + 1) {
+    if (i === ns.length-1 && ns[i]===1 && ns[i-1] === useCard) {
+      
+    } else if (ns[i] !== n + 1) {
       isStraight = false;
       break;
     }
