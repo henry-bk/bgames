@@ -134,8 +134,8 @@ export const useLexioLogics = () => {
           const floorResult = checkFiveCards(floor, useCard);
 
           console.log(myResult, floorResult);
-          if (floorResult.isStraight && !floorResult.isFlush) {
-            if (myResult.isStraight && !myResult.isFlush) {
+          if (floorResult.isStraight && floorResult.isFlush) { //Straight Flush
+            if (myResult.isStraight && myResult.isFlush) {
               if (floorResult.top < myResult.top) {
                 setCanSubmit(true);
               } else if (floorResult.top === myResult.top) {
@@ -143,9 +143,21 @@ export const useLexioLogics = () => {
               } else {
                 setCanSubmit(false);
               }
+            } else {
+              setCanSubmit(false);
+            }
+          } else if (floorResult.isFourCard) { //Four Card
+            if (myResult.isFourCard) {
+              setCanSubmit(floorResult.top < myResult.top);
+            } else if (myResult.isStraight && myResult.isFlush) {
+              setCanSubmit(true);
+            } else {
+              setCanSubmit(false);
+            }
+          } else if (floorResult.isFullHouse) { //Full House
+            if (myResult.isFullHouse) {
+              setCanSubmit(floorResult.top < myResult.top);
             } else if (
-              myResult.isFlush ||
-              myResult.isFullHouse ||
               myResult.isFourCard ||
               (myResult.isStraight && myResult.isFlush)
             ) {
@@ -153,7 +165,7 @@ export const useLexioLogics = () => {
             } else {
               setCanSubmit(false);
             }
-          } else if (floorResult.isFlush) {
+          } else if (floorResult.isFlush) { //Flush
             if (myResult.isFlush) {
               if (floorResult.top < myResult.top) {
                 setCanSubmit(true);
@@ -171,27 +183,8 @@ export const useLexioLogics = () => {
             } else {
               setCanSubmit(false);
             }
-          } else if (floorResult.isFullHouse) {
-            if (myResult.isFullHouse) {
-              setCanSubmit(floorResult.top < myResult.top);
-            } else if (
-              myResult.isFourCard ||
-              (myResult.isStraight && myResult.isFlush)
-            ) {
-              setCanSubmit(true);
-            } else {
-              setCanSubmit(false);
-            }
-          } else if (floorResult.isFourCard) {
-            if (myResult.isFourCard) {
-              setCanSubmit(floorResult.top < myResult.top);
-            } else if (myResult.isStraight && myResult.isFlush) {
-              setCanSubmit(true);
-            } else {
-              setCanSubmit(false);
-            }
-          } else if (floorResult.isStraight && floorResult.isFlush) {
-            if (myResult.isStraight && myResult.isFlush) {
+          } else if (floorResult.isStraight && !floorResult.isFlush) { //Straight
+            if (myResult.isStraight && !myResult.isFlush) {
               if (floorResult.top < myResult.top) {
                 setCanSubmit(true);
               } else if (floorResult.top === myResult.top) {
@@ -199,6 +192,13 @@ export const useLexioLogics = () => {
               } else {
                 setCanSubmit(false);
               }
+            } else if (
+              myResult.isFlush ||
+              myResult.isFullHouse ||
+              myResult.isFourCard ||
+              (myResult.isStraight && myResult.isFlush)
+            ) {
+              setCanSubmit(true);
             } else {
               setCanSubmit(false);
             }
@@ -266,6 +266,7 @@ const checkFiveCards = (cards, useCard) => {
   const isFullHouse =
     numberSet.size === 2 && (sorted[1] !== sorted[2] || sorted[2] != sorted[3]);
   const isFourCard = numberSet.size === 2 && !isFullHouse;
+  const isStraightFlush = isStraight && isFlush
 
   let top;
   let type;
@@ -289,6 +290,7 @@ const checkFiveCards = (cards, useCard) => {
     top += 100;
   }
   return {
+    isStraightFlush,
     isStraight,
     isFlush,
     isFullHouse,
@@ -299,22 +301,40 @@ const checkFiveCards = (cards, useCard) => {
 };
 
 const checkStraight = (numbers, useCard) => {
-  const ns = Object.assign([], numbers);
-  //ns.sort();
+  const cards = Object.assign([], numbers);
+  const cardsSortedWithNumber = Object.assign([], numbers).sort();
   let isStraight = true;
-  let n = ns[0];
-  for (let i = 1; i < ns.length; ++i) {
-    if (i === ns.length-1 && ns[i]===1 && ns[i-1] === useCard) {
-      
-    } else if (ns[i] !== n + 1) {
-      isStraight = false;
-      break;
-    }
-    n = ns[i];
-  }
 
-  if (ns[ns.length - 1] === 2) {
-    isStraight = false;
+  if (cards[cards.length-1] === 1){ //check Mountain - '6,7,8,9,1'
+    if (cards[cards.length-2] !== useCard) {
+        isStraight = false;
+    } else {
+      for (let i = cards.length-2; i > 0; i--){
+        if (cards[i]-1 !== cards[i-1]){
+          isStraight = false;
+          break;
+        }
+      }
+    }
+  } else { //check other case
+    for(let i = 0; i < cardsSortedWithNumber.length - 2; i++){
+      if (cardsSortedWithNumber[i] + 1 !== cardsSortedWithNumber[i+1]){
+        isStraight = false;
+        break;
+      }
+    }
   }
+  // ns.sort();
+  // n = ns[0];
+  // for (let i = 1; i < ns.length; ++i) {
+  //   if (ns[i] !== n + 1) {
+  //     isStraight = false;
+  //     break;
+  //   }
+  //   n = ns[i];
+  // }
+  // if (ns[ns.length - 1] === 2) {
+  //   isStraight = false;
+  // }
   return isStraight;
 };
